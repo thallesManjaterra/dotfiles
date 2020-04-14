@@ -36,9 +36,6 @@ set incsearch
 " Highlight search matches
 set hlsearch
 
-" Disable auto comment
-autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
-
 " Ignore case in search
 set smartcase
 
@@ -83,7 +80,7 @@ set timeout timeoutlen=1000 ttimeoutlen=100
 set laststatus=2
 
 " Set the status line to something useful
-set statusline=%f\ %=L:%l/%L\ %c\ (%p%%)
+" set statusline=%f\ %=L:%l/%L\ %c\ (%p%%)
 
 " Hide the toolbar
 set guioptions-=T
@@ -121,8 +118,8 @@ set lazyredraw
 set showmatch
 
 " Set built-in file system explorer to use layout similar to the NERDTree plugin
-let loaded_netrwPlugin = 1
-" let g:netrw_liststyle=3
+let loaded_netrwPlugin = 1 " Disable netrw plugin
+let g:netrw_liststyle=3
 
 " }}}
 
@@ -319,13 +316,6 @@ let NERDTreeShowLineNumbers=1
 let NERDTreeQuitOnOpen=1
 "}}}
 
-"css syntax {{{
-augroup VimCSS3Syntax
-  autocmd!
-
-  autocmd FileType css setlocal iskeyword+=-
-augroup END
-"}}}
 
 "}}}
 
@@ -364,6 +354,14 @@ map <F2> :%w !node<CR>
 " Disable automatic comment insertion
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
+"css syntax {{{
+augroup VimCSS3Syntax
+  autocmd!
+
+  autocmd FileType css setlocal iskeyword+=-
+augroup END
+"}}}
+"
 " file formats {{{
 autocmd Filetype gitcommit setlocal spell textwidth=72
 autocmd Filetype markdown setlocal wrap linebreak nolist textwidth=0 wrapmargin=0 " http://vim.wikia.com/wiki/Word_wrap_without_line_breaks
