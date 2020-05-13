@@ -1,4 +1,4 @@
-" Settings {{{
+    "  Settings {{{
 
 " Switch syntax highlighting on, when the terminal has colors
 syntax on
@@ -119,17 +119,21 @@ set showmatch
 
 " Set built-in file system explorer to use layout similar to the NERDTree plugin
 let loaded_netrwPlugin = 1 " Disable netrw plugin
-let g:netrw_liststyle=3
+" let g:netrw_liststyle=3
 
 " }}}
 
 " Plugins {{{
 
-filetype off                  " required
+"filetype off                  " required
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin() "{{{
 Plugin 'VundleVim/Vundle.vim'
+Plugin 'jszakmeister/vim-togglecursor'
+Plugin 'honza/vim-snippets'
+Plugin 'bkad/camelcasemotion'
+Plugin 'frazrepo/vim-rainbow'
 Plugin 'matze/vim-move'
 Plugin 'axiaoxin/favorite-vim-colorscheme'
 Plugin 'airblade/vim-gitgutter'
@@ -140,7 +144,6 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'christoomey/vim-system-copy'
 Plugin 'pangloss/vim-javascript'
 Plugin 'tpope/vim-fugitive'
-Plugin 'jszakmeister/vim-togglecursor'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'mattn/emmet-vim'
 Plugin 'maxmellon/vim-jsx-pretty'
@@ -155,19 +158,28 @@ Plugin 'machakann/vim-highlightedyank'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'ap/vim-css-color'
 Plugin 'prettier/vim-prettier'
+Plugin 'elmcast/elm-vim'
 Plugin 'yggdroot/indentline'
 Plugin 'valloric/matchtagalways'
 Plugin 'rrethy/vim-illuminate'
 Plugin 'piiih/vim-ramda-import'
-Plugin 'elmcast/elm-vim'
-Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plugin 'scrooloose/nerdtree'
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plugin 'ryanoasis/vim-devicons'
-" Plugin 'betoharres/vim-react-ultisnips'
-" Plugin 'kien/rainbow_parentheses.vim'
 call vundle#end() "}}}
 filetype plugin indent on    " required
 
+
+let g:camelcasemotion_key = '<leader>' "{{{
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
+"}}}
 
 " move lines key
 let g:move_key_modifier = 'C'
@@ -228,27 +240,22 @@ set t_Co=256   "  enable 256 colors in vim
 " CtrlP {{{
 map <leader>t <C-p>
 map <leader>y :CtrlPBuffer<cr>
-"let g:ctrlp_show_hidden=1
+let g:ctrlp_show_hidden=1
 let g:ctrlp_working_path_mode=0
 let g:ctrlp_max_height=30
 " CtrlP -> override <C-o> to provide options for how to open files
 let g:ctrlp_arg_map = 1
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist)|(\.(swp|ico|git|svn))$'
 " CtrlP -> files matched are ignored when expanding wildcards
-set wildignore+=*/.git/*,*/.hg/*,*/.svn/*.,*/.DS_Store
+"set wildignore+=*/.git/*,*/.hg/*,*/.svn/*.,*/.DS_Store
 
 " CtrlP -> use Ag for searching instead of VimScript
 " (might not work with ctrlp_show_hidden and ctrlp_custom_ignore)
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+"let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
 " CtrlP -> directories to ignore when fuzzy finding
-let g:ctrlp_custom_ignore = '\v[\/]((node_modules)|\.(git|svn|grunt|sass-cache))$'
 
-let g:ctrlp_custom_ignore = {
-      \'dir' : '\.git$\|build$\|bower_components\|node_modules\|dist\|target' ,
-      \'file' : '\v\.(exe|dll|lib)$'
-      \}
 "}}}
-
 
 " Ack (uses Ag behind the scenes)
 let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -265,7 +272,7 @@ if !exists('g:airline_symbols')
 endif
 let g:airline_symbols.space = "\ua0"
 let g:airline_section_z = '%3p%% %3l/%L:%3v'
-let g:airline_section_x = ''
+"let g:airline_section_x = ''
 let g:airline_skip_empty_sections = 1
 "}}}
 
@@ -309,13 +316,9 @@ highlight clear SignColumn
 " NERDTree {{{
 map <silent> <C-n> :NERDTreeToggle<CR>
 let NERDTreeMinimalUI = 1
-" let g:NERDTreeWinPos = "right"
-" let NERDTreeDirArrows = 1
 let NERDTreeShowLineNumbers=1
-" let g:WebDevIconsUnicodeDecorateFolderNodes = v:false
 let NERDTreeQuitOnOpen=1
 "}}}
-
 
 "}}}
 
@@ -340,16 +343,13 @@ map <leader>w] <C-W>_ " maximize height
 map <leader>w[ <C-W>= " equalize all windows
 "}}}
 
-" Make splitting Vim windows easier
-map <leader>; <C-W>s
-map <leader>` <C-W>v
-
 " Run node
 map <F2> :%w !node<CR>
 
 " }}}
 
 " Commands {{{
+
 
 " Disable automatic comment insertion
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -373,6 +373,23 @@ autocmd Bufread,BufNewFile *.elm set filetype=elm
 autocmd Bufread,BufNewFile *.spv set filetype=php
 autocmd Bufread,BufNewFile *.md set filetype=markdown " Vim interprets .md as 'modula2' otherwise, see :set filetype?
 "}}}
+
+" vim-elm {{{
+let g:elm_jump_to_error = 0
+let g:elm_make_output_file = "elm.js"
+let g:elm_make_show_warnings = 0
+let g:elm_syntastic_show_warnings = 0
+let g:elm_browser_command = ""
+let g:elm_detailed_complete = 0
+let g:elm_format_autosave = 1
+let g:elm_format_fail_silently = 0
+let g:elm_setup_keybindings = 1
+"}}}
+
+
+
+" vim-rainbow
+let g:rainbow_active = 1
 
 " Create a 'scratch buffer' which is a temporary buffer Vim wont ask to save
 " http://vim.wikia.com/wiki/Display_output_of_shell_commands_in_new_window {{{
@@ -433,9 +450,7 @@ hi CursorLine ctermbg=NONE cterm=NONE ctermbg=NONE ctermfg=NONE guibg=NONE guifg
 
 " illuminatedWord
 hi illuminatedWord cterm=underline gui=underline
-"hi link illuminatedWord Visual
-
-hi CursorLineNr gui=none cterm=none guifg=yellow guibg=black
+  "hi link illuminatedWord Visual
 
 " Highlight GitGutter {{{
 highlight GitGutterAdd    guifg=#009900 guibg=black ctermfg=2 ctermbg=black
@@ -449,7 +464,6 @@ hi MatchParen guibg=NONE guifg=yellow
 " CursorLine number highlight
 hi CursorLineNr gui=none cterm=none guifg=yellow guibg=black
 
-" Custom CtrlP highlight {{{
 let g:ctrlp_buffer_func = { 'enter': 'BrightHighlightOn', 'exit':  'BrightHighlightOff', }
 
 function BrightHighlightOn()
@@ -457,8 +471,7 @@ function BrightHighlightOn()
 endfunction
 
 function BrightHighlightOff()
-  hi CursorLine guibg=#191919
+  hi CursorLine ctermbg=NONE cterm=NONE ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
 endfunction
-"}}}
 
 "}}}
