@@ -1,18 +1,4 @@
-    "  Settings {{{
-
-" Switch syntax highlighting on, when the terminal has colors
-syntax on
-
-" Use vim, not vi api
-set nocompatible
-
-" let base16colorspace=256  " Access colors present in 256 colorspace
-set termguicolors
-
-" No backup files
-set nobackup
-
-" No write backup
+"Settings {{{
 set nowritebackup
 
 " No swap file
@@ -103,7 +89,7 @@ set splitbelow
 set splitright
 
 " Highlight the current line
-set cursorline
+"set cursorline
 
 " Ensure Vim doesn't beep at you every time you make a mistype
 set visualbell
@@ -117,19 +103,19 @@ set lazyredraw
 " highlight a matching [{()}] when cursor is placed on start/end character
 set showmatch
 
-" Set built-in file system explorer to use layout similar to the NERDTree plugin
+" Set built-in file system explorer to use layout similar to the NER
+"Tree plugin
 let loaded_netrwPlugin = 1 " Disable netrw plugin
 " let g:netrw_liststyle=3
 
 " }}}
 
-" Plugins {{{
+" Plugin{{{
 
-"filetype off                  " required
-" set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin() "{{{
 Plugin 'VundleVim/Vundle.vim'
+Plugin 'ekalinin/Dockerfile.vim'
 Plugin 'jszakmeister/vim-togglecursor'
 Plugin 'honza/vim-snippets'
 Plugin 'bkad/camelcasemotion'
@@ -143,7 +129,6 @@ Plugin 'neovimhaskell/haskell-vim'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'christoomey/vim-system-copy'
 Plugin 'pangloss/vim-javascript'
-Plugin 'tpope/vim-fugitive'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'mattn/emmet-vim'
 Plugin 'maxmellon/vim-jsx-pretty'
@@ -164,11 +149,10 @@ Plugin 'valloric/matchtagalways'
 Plugin 'rrethy/vim-illuminate'
 Plugin 'piiih/vim-ramda-import'
 Plugin 'scrooloose/nerdtree'
-Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plugin 'ryanoasis/vim-devicons'
-call vundle#end() "}}}
-filetype plugin indent on    " required
-
+"}}}
+call vundle#end()
+filetype plugin indent on
+syntax on
 
 let g:camelcasemotion_key = '<leader>' "{{{
 map <silent> w <Plug>CamelCaseMotion_w
@@ -180,9 +164,10 @@ sunmap b
 sunmap e
 sunmap ge
 "}}}
-
 " move lines key
 let g:move_key_modifier = 'C'
+vmap <C-m> <Plug>MoveBlockUp
+nmap <C-m> <Plug>MoveLineUp
 
 " vim-javascript {{{
 let g:javascript_plugin_jsdoc = 1
@@ -263,9 +248,8 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 " Airline (status line) {{{
 let g:airline_theme= 'serene'
 let g:airline_section_y = ''
-let g:webdevicons_enable_airline_statusline_fileformat_symbols = 0
-let g:airline_powerline_fonts = 1
-set laststatus=2
+"let g:airline_powerline_fonts = 1
+let g:airline_section_y = ''
 let g:airline#extensions#tabline#enabled = 1
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -318,6 +302,7 @@ map <silent> <C-n> :NERDTreeToggle<CR>
 let NERDTreeMinimalUI = 1
 let NERDTreeShowLineNumbers=1
 let NERDTreeQuitOnOpen=1
+let NERDTreeHighlightCursorline=0
 "}}}
 
 "}}}
@@ -336,13 +321,6 @@ nnoremap  <leader>l :<C-c>
 " Buffers (runs the delete buffer command on all open buffers)
 map <leader>bd :bufdo bd<cr>
 
-" Make handling vertical/linear Vim windows easier {{{
-map <leader>w- <C-W>- " decrement height
-map <leader>w+ <C-W>+ " increment height
-map <leader>w] <C-W>_ " maximize height
-map <leader>w[ <C-W>= " equalize all windows
-"}}}
-
 " Run node
 map <F2> :%w !node<CR>
 
@@ -350,9 +328,19 @@ map <F2> :%w !node<CR>
 
 " Commands {{{
 
-
 " Disable automatic comment insertion
+
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+fun! StripTrailingWhitespace()
+  " don't strip on these filetypes
+  if &ft =~ 'markdown'
+    return
+  endif
+  %s/\s\+$//e
+endfun
+autocmd BufWritePre * call StripTrailingWhitespace()
+
+hi CursorLine cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
 
 "css syntax {{{
 augroup VimCSS3Syntax
@@ -386,10 +374,10 @@ let g:elm_format_fail_silently = 0
 let g:elm_setup_keybindings = 1
 "}}}
 
-
-
 " vim-rainbow
 let g:rainbow_active = 1
+let g:rainbow_guifgs = ['RoyalBlue3', 'DarkOrange3', 'DarkOrchid3', 'FireBrick']
+let g:rainbow_ctermfgs = ['lightblue', 'lightgreen', 'yellow', 'red', 'magenta']
 
 " Create a 'scratch buffer' which is a temporary buffer Vim wont ask to save
 " http://vim.wikia.com/wiki/Display_output_of_shell_commands_in_new_window {{{
@@ -437,7 +425,7 @@ autocmd InsertLeave * call SetSpellingColors()
 
 " Change colourscheme when diffing {{{
 fun! SetDiffColors()
-  highlight DiffAdd    cterm=bold ctermfg=white ctermbg=DarkGreen
+    highlight DiffAdd    cterm=bold ctermfg=white ctermbg=DarkGreen
   highlight DiffDelete cterm=bold ctermfg=white ctermbg=DarkGrey
   highlight DiffChange cterm=bold ctermfg=white ctermbg=DarkBlue
   highlight DiffText   cterm=bold ctermfg=white ctermbg=DarkRed
@@ -445,12 +433,8 @@ endfun
 autocmd FilterWritePre * call SetDiffColors()
 "}}}
 
-" Disable cursor line highlight
-hi CursorLine ctermbg=NONE cterm=NONE ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
-
 " illuminatedWord
 hi illuminatedWord cterm=underline gui=underline
-  "hi link illuminatedWord Visual
 
 " Highlight GitGutter {{{
 highlight GitGutterAdd    guifg=#009900 guibg=black ctermfg=2 ctermbg=black
@@ -458,20 +442,7 @@ highlight GitGutterChange guifg=#bbbb00 guibg=black ctermfg=3 ctermbg=black
 highlight GitGutterDelete guifg=#ff2222 guibg=black ctermfg=1 ctermbg=black
 "}}}
 
-" Highlight match paren
-hi MatchParen guibg=NONE guifg=yellow
-
-" CursorLine number highlight
-hi CursorLineNr gui=none cterm=none guifg=yellow guibg=black
-
-let g:ctrlp_buffer_func = { 'enter': 'BrightHighlightOn', 'exit':  'BrightHighlightOff', }
-
-function BrightHighlightOn()
-  hi CursorLine guibg=darkred
-endfunction
-
-function BrightHighlightOff()
-  hi CursorLine ctermbg=NONE cterm=NONE ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
-endfunction
+hi MatchParen cterm=bold ctermbg=black ctermfg=red
 
 "}}}
+
